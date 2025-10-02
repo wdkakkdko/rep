@@ -1,0 +1,134 @@
+#include "colors.inc"
+#include "textures.inc"
+
+// カメラ
+camera {
+  location <-50, 150, -270> 
+  look_at  <0, 40, 0>
+  angle 40
+}
+
+// 光源
+light_source { <200, 300, -400> color White }
+light_source { <-200, 100, -150> color Gray50 } // 補助の光源
+
+// --- A. 基本となる単位図形を宣言 ---
+#declare UnitBox = box { <-0.5, -0.5, -0.5>, <0.5, 0.5, 0.5> }
+#declare UnitCylinder = cylinder { <0, -0.5, 0>, <0, 0.5, 0>, 0.5 }
+
+// --- B. 各パーツの質感を定義 ---
+
+// B-1: 本体に使われる「光沢のある赤い塗装」
+#declare Red_Paint_Texture = texture {
+  pigment { color Red }
+  finish {
+    specular 0.6     // 光沢の強さ
+    roughness 0.03   // 光沢のシャープさ
+    reflection { 0.2 fresnel on } // 弱めの映り込み
+  }
+  normal { bumps 0.1 scale 0.005 } // 表面の微細な凹凸
+}
+
+// B-2: 操作コンソールに使われる「金属的なグレー」
+#declare Gray_Metal_Texture = texture {
+  pigment { color Gray70 }
+  finish {
+    specular 0.8
+    roughness 0.01
+    reflection { 0.4 metallic } // 金属的な反射
+  }
+}
+
+// B-3: キャスターに使われる「暗い色のプラスチック」
+#declare Dark_Plastic_Texture = texture {
+  pigment { color Gray30 }
+  finish { specular 0.1 roughness 0.2 }
+}
+
+// B-4: ボタンに使われる「光沢のある白」
+#declare White_Button_Texture = texture {
+  pigment { color White }
+  finish { specular 0.8 roughness 0.01 }
+}
+
+// B-5: 内部の「透明なガラス板」
+#declare Clear_Glass_Texture = texture {
+  pigment { rgbt <1, 1, 1, 0.9> }
+  finish { 
+    reflection 0.3 
+    phong 0.8 
+    specular 0.7
+  }
+}
+
+// ----------------------------------------------------
+// --- クレーンゲーム下半分 (質感・色 再現版) ---
+// ----------------------------------------------------
+
+union {
+
+  // --- 1. 土台部分 ---
+  difference {
+    // ベースとなる大きな箱
+    object { 
+      UnitBox
+      scale <120, 75, 70>
+      translate <0, 42.5, 0>
+    }
+    // 内部の落下ルート
+    object {
+      UnitBox
+      scale <35, 76, 39>
+      translate <37.5, 43.5, -14.5>
+    }
+    // 手前の景品取り出し口
+    object {
+      UnitBox
+      scale <35, 25, 4>
+      translate <37.5, 17.5, -34>
+    }
+    texture { Red_Paint_Texture } // 土台の質感を適用
+  }
+
+  // --- 2. 操作コンソール ---
+  union {
+    object { UnitBox scale <70, 10, 15> translate <0, 65, -37.5> }
+    object { UnitBox scale <70, 10, 5> translate <0, 55, -42.5> }
+    // ボタンには個別に質感を設定
+    object { UnitCylinder scale<6, 1, 6> translate<-20, 70.5, -37.5> texture{White_Button_Texture}}
+    object { UnitCylinder scale<6, 1, 6> translate<0,   70.5, -37.5> texture{White_Button_Texture}}
+    object { UnitCylinder scale<6, 1, 6> translate<20,  70.5, -37.5> texture{White_Button_Texture}}
+    texture { Gray_Metal_Texture } // コンソール全体の質感を適用
+  }
+  
+  // --- 3. 景品落下口のガラス板 ---
+  union {
+    // 左側のガラス板
+    object {
+      UnitBox
+      scale <0.2, 30, 36>
+      translate <20.5, 75, -15>
+    }
+    // 奥側のガラス板
+    object {
+      UnitBox
+      scale <0.2, 30, 36>
+      rotate <0, 90, 0>
+      translate <37.5, 75, 4.5>
+    }
+    texture { Clear_Glass_Texture } // ガラスの質感を適用
+  }
+
+  // --- 4. 装飾（キャスター） ---
+  union {
+    object { UnitCylinder scale <10, 5, 10> translate <-55, 2.5, -25> }
+    object { UnitCylinder scale <10, 5, 10> translate <-55, 2.5,  25> }
+    object { UnitCylinder scale <10, 5, 10> translate < 55, 2.5, -25> }
+    object { UnitCylinder scale <10, 5, 10> translate < 55, 2.5,  25> }
+    texture { Dark_Plastic_Texture } // キャスターの質感を適用
+  }
+}
+
+// 周囲の映り込みを確認するための床と空
+plane{ y, 0 pigment{checker color White color Gray80}}
+sky_sphere{ pigment{ gradient y color_map{[0 color SkyBlue][1 color White]} } }
