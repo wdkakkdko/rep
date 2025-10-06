@@ -76,16 +76,22 @@ light_source { <-200, 100, -150> color Gray50 }
     cylinder{
         <0,(clock-7)*0.05,0>, <0, -0.3-((clock-7)*0.02), 0>, 0.25 texture { T_Claw_Black }
     }
-    #else 
+    #else
     #if(clock>13&clock<18)
     cylinder{
-        <0,((6*0.05)+(clock-13)*-0.05),0>, <0, (-0.3-(6*0.02)+(clock-13)*0.02), 0>, 0.25 texture { T_Claw_Black }
+        <0,(clock-7)*0.05,0>, <0, -0.3-((6)*0.02), 0>, 0.25 texture { T_Claw_Black }
+    }
+    #else 
+    #if(clock>18&clock<23)
+    cylinder{
+        <0,((6*0.05)+(clock-18)*-0.05),0>, <0, (-0.3-(6*0.02)+(clock-18)*0.02), 0>, 0.25 texture { T_Claw_Black }
     }
     #else
-    #if(clock>18)
+    #if(clock>23)
     cylinder { 
         <0,0,0>, <0, -0.3, 0>, 0.25 texture { T_Claw_Black }
     }   
+    #end
     #end
     #end
     #end
@@ -111,7 +117,9 @@ light_source { <-200, 100, -150> color Gray50 }
         texture { T_White_Metal }
     }
     object { Glass_Panels }
-    object { Gantry_System texture { T_White_Metal } } 
+    object { Gantry_System texture { T_White_Metal } }
+    
+    //0<clock<31 
     #if (clock<7)
         object { Claw_Unit translate <clock*-0.1, Y_Height - 0.02, 0> }   
         #declare temp_x=clock*-0.1;
@@ -120,16 +128,24 @@ light_source { <-200, 100, -150> color Gray50 }
     object { Claw_Unit translate <-0.7, (Y_Height-((clock-7)*0.05)), 0> }
     #else
     #if (clock<18)
-    object { Claw_Unit translate <-0.7, (Y_Height-(6*0.05)+((clock-13)*0.05)), 0> }
+    object { Claw_Unit translate <-0.7, (Y_Height-((13-7)*0.05)), 0> }
+    #else
+    #if (clock<23)
+    object { Claw_Unit translate <-0.7, (Y_Height-(6*0.05)+((clock-18)*0.05)), 0> }
     #else
     #if (clock<31)
-    object { Claw_Unit translate <-0.7+(clock-18)*0.1, (Y_Height-(6*0.05)+(5*0.05)), 0> }
+    object { Claw_Unit translate <-0.7+(clock-23)*0.1, (Y_Height-(6*0.05)+(5*0.05)), 0> }
     #else
-    object { Claw_Unit translate <-0.7+13*0.1, (Y_Height-(6*0.05)+(5*0.05)), 0> }
+    //object { Claw_Unit translate <-0.7+13*0.1, (Y_Height-(6*0.05)+(5*0.05)), 0> }
     #end
     #end
     #end
-    #end                     
+    #end
+    #end
+    
+    //31<clock<62
+    
+                        
 } 
 
 // --- E. �i�i�I�u�W�F�N�g�̒�` ---
